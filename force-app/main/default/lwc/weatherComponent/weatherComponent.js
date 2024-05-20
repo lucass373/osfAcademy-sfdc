@@ -7,10 +7,11 @@ import BILLING_CITY from '@salesforce/schema/Account.BillingCity'; // Importing 
 const fields = [BILLING_CITY]; // Defining fields to retrieve from the record
 
 export default class WeatherScreen extends LightningElement {
+    @api recordId; // Record Id passed to the component
     weatherData = {}; // Object to store weather data
     showInfo = false; // Flag to control visibility of weather information
     icon; // Variable to store weather icon URL
-    @api recordId; // Record Id passed to the component
+    titleStr;
 
     // Wire service to get the record data
     @wire(getRecord, { recordId: '$recordId', fields: fields })
@@ -21,6 +22,7 @@ export default class WeatherScreen extends LightningElement {
     wiredWeather({ error, data }) {
         if (data) {
             // If data is received, update weatherData, icon, and showInfo
+            this.titleStr = "Weather in " + getFieldValue(this.account.data, BILLING_CITY);
             this.weatherData = data;
             this.icon = ' https://openweathermap.org/img/wn/'+ this.weatherData.icon + '@2x.png' 
             this.showInfo = true;

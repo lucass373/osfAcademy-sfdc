@@ -1,17 +1,21 @@
 <template>
-    <lightning-card title="Weather Information" icon-name="custom:custom63">
+    <lightning-card title={titleStr} icon-name="custom:custom3">
             
         <template if:true={showInfo}>
-            <div class="slds-p-around_medium">
-                <p>City: {billingCity}</p>
-                <p>Temperature: {weatherData.temperature} °C</p>
-                <p>Description: {weatherData.description}</p>
-                <img src={icon} alt="Weather Icon" />
+            <div class="container">
+                <div class="header">
+                    <p>Description: {weatherData.description}</p>
+                    <p>Temperature: {weatherData.temperature} °C</p>
+                    
+                </div>
+                <div>
+                    <img src={icon} alt="Weather Icon" />
+                </div>
             </div>
         </template>   
         
         <template if:true={error}>
-            <div class="slds-p-around_medium slds-text-color_error">
+            <div>
                 <p>Error: {error}</p>
             </div>
         </template>
