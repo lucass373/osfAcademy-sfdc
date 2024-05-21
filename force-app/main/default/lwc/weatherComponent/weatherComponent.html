@@ -12,6 +12,13 @@
                     <img src={icon} alt="Weather Icon" />
                 </div>
             </div>
+        </template>
+        <template if:false={showInfo}>
+            <div class="container">
+                <div class="header">
+                    <p>No weather for that city</p>
+                </div>
+            </div>
         </template>   
         
         <template if:true={error}>
