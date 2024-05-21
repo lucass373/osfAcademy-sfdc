@@ -1,85 +1,69 @@
 @isTest
 public class SumAmountTest {
-    
-    @isTest
-    static void testSumAmountBatch() {
-        // Setup test data
-        Account testAccount1 = new Account(Name = 'Test Account 1');
-        Account testAccount2 = new Account(Name = 'Test Account 2');
-        insert new List<Account>{testAccount1, testAccount2};
-         
-        //insert the contacts
-        Contact primaryContact = new Contact(
-            FirstName = 'Primary',
-            LastName = 'Contact',
-            AccountId = testAccount1.Id,
-            Is_Primary_Contact__c = true,
-            Primary_Contact_Phone__c = '1234567890'
-        );
-        insert primaryContact;
+    @testSetup
+    static void setup() {
+        // Create test Accounts
+        List<Account> accounts = new List<Account>{
+            new Account(Name = 'Account A'),
+            new Account(Name = 'Account B')
+        };
+        insert accounts;
         
-        Contact nonPrimaryContact = new Contact(
-            FirstName = 'non-Primary',
-            LastName = 'Contact',
-            AccountId = testAccount2.Id,
-            Is_Primary_Contact__c = false,
-            Primary_Contact_Phone__c = '1234567890'
-        );
-        insert nonPrimaryContact;
+        // Create test Contacts with Is_Primary_Contact__c set to true
+        List<Contact> contacts = new List<Contact>{
+            new Contact(FirstName = 'Primary', LastName = 'ContactA', Email = 'primaryA@example.com', AccountId = accounts[0].Id, Is_Primary_Contact__c = true),
+            new Contact(FirstName = 'Primary', LastName = 'ContactB', Email = 'primaryB@example.com', AccountId = accounts[1].Id, Is_Primary_Contact__c = true)
+        };
+        insert contacts;
+        
+        // Create test Opportunities
+        List<Opportunity> opportunities = new List<Opportunity>{
+            new Opportunity(AccountId = accounts[0].Id, Name='op1', StageName = 'Closed Won', Amount = 1000, CloseDate = Date.today()),
+            new Opportunity(AccountId = accounts[0].Id, Name='op2', StageName = 'Negotiation', Amount = 500, CloseDate = Date.today().addMonths(1)),
+            new Opportunity(AccountId = accounts[0].Id, Name='op3', StageName = 'Closed Lost', Amount = 200, CloseDate = Date.today().addMonths(-1)),
+                
+            new Opportunity(AccountId = accounts[1].Id, Name='op4', StageName = 'Closed Won', Amount = 1500, CloseDate = Date.today().addMonths(-1)),
+            new Opportunity(AccountId = accounts[1].Id, Name='op5', StageName = 'Negotiation', Amount = 700, CloseDate = Date.today().addMonths(1)),
+            new Opportunity(AccountId = accounts[1].Id, Name='op6', StageName = 'Closed Lost', Amount = 300, CloseDate = Date.today())
+        };
+        insert opportunities;
+    }
 
-        
-        // Insert opportunities
-        Opportunity opp1 = new Opportunity(
-            Name = 'Opportunity 1',
-            AccountId = testAccount1.Id,
-            StageName = 'Closed Won',
-            Amount = 1000,
-            CloseDate = Date.today()
-        );
-        Opportunity opp2 = new Opportunity(
-            Name = 'Opportunity 2',
-            AccountId = testAccount1.Id,
-            StageName = 'Open',
-            Amount = 2000,
-            CloseDate = Date.today()
-        );
-        Opportunity opp3 = new Opportunity(
-            Name = 'Opportunity 3',
-            AccountId = testAccount1.Id,
-            StageName = 'Closed Lost',
-            Amount = 500,
-            CloseDate = Date.today()
-        );
-        Opportunity opp4 = new Opportunity(
-            Name = 'Opportunity 4',
-            AccountId = testAccount2.Id,
-            StageName = 'Closed Won',
-            Amount = 3000,
-            CloseDate = Date.today()
-        );
-        insert new List<Opportunity>{opp1, opp2, opp3, opp4};
-        
-        // Execute batch
+    @isTest
+    static void testBatchExecution() {
+        // Start the test
         System.Test.startTest();
+        // Execute the batch class
         SumAmount batch = new SumAmount();
         Database.executeBatch(batch);
         System.Test.stopTest();
         
-        // Verify the results
-        // Check the batch summary map
-        Map<Id, Map<String, Decimal>> expectedAccountSummaryMap = new Map<Id, Map<String, Decimal>>{
-            testAccount1.Id => new Map<String, Decimal>{
-                'Closed Won' => 1000,
-                'Open' => 2000,
-                'Closed Lost' => 500
-            },
-            testAccount2.Id => new Map<String, Decimal>{
-                'Closed Won' => 3000,
-                'Open' => 0,
-                'Closed Lost' => 0
-            }
-        };
+        // Verify that the batch processed the records correctly
+        // Use System.debug or Assertions to validate the results
+        List<EmailMessage> sentEmails = [SELECT Id, Subject, HtmlBody FROM EmailMessage];
+
+        System.assertEquals(2, sentEmails.size(), 'Two emails should have been sent.');
         
-        System.assertEquals(expectedAccountSummaryMap, batch.accountSummaryMap, 'Account summaries should match expected values.');
+        // Check the content of the emails
+          for (EmailMessage email : sentEmails) {
+            if (email.Subject.contains('Account A')) {
+                System.assert(email.HtmlBody.contains('Account A'), 'Email should contain Account A.');
+                System.assert(email.HtmlBody.contains('Closed Won'), 'Email should contain Closed Won stage.');
+                System.assert(email.HtmlBody.contains('R$ 1.000'), 'Email should contain Closed Won amount for Account A.');
+                System.assert(email.HtmlBody.contains('Open'), 'Email should contain Open stage.');
+                System.assert(email.HtmlBody.contains('R$ 500'), 'Email should contain Open amount for Account A.');
+                System.assert(email.HtmlBody.contains('Closed Lost'), 'Email should contain Closed Lost stage.');
+                System.assert(email.HtmlBody.contains('R$ 200'), 'Email should contain Closed Lost amount for Account A.');
+                
+            } else if (email.Subject.contains('Account B')) {
+                System.assert(email.HtmlBody.contains('Account B'), 'Email should contain Account B.');
+                System.assert(email.HtmlBody.contains('Closed Won'), 'Email should contain Closed Won stage.');
+                System.assert(email.HtmlBody.contains('R$ 1.500'), 'Email should contain Closed Won amount for Account B.');
+                System.assert(email.HtmlBody.contains('Open'), 'Email should contain Open stage.');
+                System.assert(email.HtmlBody.contains('R$ 700'), 'Email should contain Open amount for Account B.');
+                System.assert(email.HtmlBody.contains('Closed Lost'), 'Email should contain Closed Lost stage.');
+                System.assert(email.HtmlBody.contains('R$ 300'), 'Email should contain Closed Lost amount for Account B.');
+            }
+        }
     }
 }
