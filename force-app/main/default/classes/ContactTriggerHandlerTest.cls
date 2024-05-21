@@ -85,13 +85,12 @@ public class ContactTriggerHandlerTest {
         update primaryContact;
         System.Test.stopTest();
 
-        // Using Test methods to verify @future method execution
-        System.Test.startTest();
+     
         // As future methods are enqueued, we have to make sure they execute
         // Fetching non-primary contacts again to verify they got updated
         nonPrimaryContact1 = [SELECT Primary_Contact_Phone__c FROM Contact WHERE Id = :nonPrimaryContact1.Id];
         nonPrimaryContact2 = [SELECT Primary_Contact_Phone__c FROM Contact WHERE Id = :nonPrimaryContact2.Id];
-        System.Test.stopTest();
+        
 
         // Assertions to verify that non-primary contacts have the updated primary contact phone
         System.assertEquals('0987654321', nonPrimaryContact1.Primary_Contact_Phone__c, 'The non-primary contact should have the updated primary contact phone.');
