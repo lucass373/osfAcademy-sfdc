@@ -27,10 +27,10 @@ public class SumAmount implements Database.Batchable<SObject>, Database.Stateful
                 // Update the amount based on the stage of the opportunity
                 if (opp.StageName == 'Closed Won') {
                     stageSummary.put('Closed Won', stageSummary.get('Closed Won') + opp.Amount);
-                } else if (opp.StageName == 'Open') {
-                    stageSummary.put('Open', stageSummary.get('Open') + opp.Amount);
-                } else if (opp.StageName == 'Closed Lost') {
+                }  else if (opp.StageName == 'Closed Lost') {
                     stageSummary.put('Closed Lost', stageSummary.get('Closed Lost') + opp.Amount);
+                }else {
+                    stageSummary.put('Open', stageSummary.get('Open') + opp.Amount);
                 }
             }
         }
