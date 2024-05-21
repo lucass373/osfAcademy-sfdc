@@ -24,18 +24,17 @@ public class WeatherService {
 
         // If the response status code is 200 (OK), parse the weather data
         if (response.getStatusCode() == 200) {
+
             // Parsing the JSON response into a Map
             Map<String, Object> result = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
+
             // Extracting city name from the response
             weatherDet.city = String.valueOf(result.get('name'));
+
             // Extracting main weather information from the response
             Map<String, Object> mainResult = (Map<String, Object>) result.get('main');
             weatherDet.temperature = String.valueOf(mainResult.get('temp'));
-            weatherDet.pressure = String.valueOf(mainResult.get('pressure'));
-            weatherDet.humidity = String.valueOf(mainResult.get('humidity'));
-            weatherDet.feelsLike = String.valueOf(mainResult.get('feels_like'));
-            weatherDet.tempMin = String.valueOf(mainResult.get('temp_min'));
-            weatherDet.tempMax = String.valueOf(mainResult.get('temp_max'));
+
             // Extracting weather description and icon from the response
             List<Object> weatherList = (List<Object>) result.get('weather');
             if (!weatherList.isEmpty()) {
@@ -43,6 +42,7 @@ public class WeatherService {
                 weatherDet.description = String.valueOf(weather.get('description'));
                 weatherDet.icon = String.valueOf(weather.get('icon'));
             }
+            
             // Returning the WeatherWrapper object with weather data
             return weatherDet;
         } else {
