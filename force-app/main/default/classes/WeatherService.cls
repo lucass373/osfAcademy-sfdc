@@ -5,8 +5,18 @@ public class WeatherService {
     public static WeatherWrapper getWeather(String city) {
         // API key for accessing weather data
         String apiKey = 'dff7f9b1a1d3e65f63fe9e6331e80cfc';
+
+        String billingCity;
+
+        if (city.contains(' ')) {
+            billingCity = city.replace(' ', '%20');
+        } else {
+            billingCity = city;
+        }
+        
+
         // Constructing the endpoint URL for the API call
-        String endpoint = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + apiKey + '&units=metric';
+        String endpoint = 'https://api.openweathermap.org/data/2.5/weather?q=' + billingCity + '&appid=' + apiKey + '&units=metric';
         
         // Creating an HTTP object for making requests
         Http http = new Http();
@@ -42,7 +52,7 @@ public class WeatherService {
                 weatherDet.description = String.valueOf(weather.get('description'));
                 weatherDet.icon = String.valueOf(weather.get('icon'));
             }
-            
+
             // Returning the WeatherWrapper object with weather data
             return weatherDet;
         } else {
