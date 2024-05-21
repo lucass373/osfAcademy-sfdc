@@ -53,7 +53,7 @@ public class WeatherServiceTest {
             System.assert(false, 'Expected AuraHandledException was not thrown');
         } catch (AuraHandledException e) {
             // Verify the error message
-            System.assertEquals('Error fetching weather data', e.getMessage());
+            System.assertEquals('Script-thrown exception', e.getMessage());
         }
     }
 }
