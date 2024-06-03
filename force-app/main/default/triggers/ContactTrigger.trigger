@@ -8,7 +8,7 @@ Created Date      : May 14, 2024
 @author           : Lucas Silva de Oliveira
 Modification Log:
 Ver   Date         Author         Modification
-1.0   06-03-2024   Lucas Silva    Initial Version
+1.0   05-14-2024   Lucas Silva    Initial Version
 *********************************************************
 */
 trigger ContactTrigger on Contact (before insert, before update) {
