@@ -5,7 +5,7 @@ public class SumAmount implements Database.Batchable<SObject>, Database.Stateful
     // This method is called at the beginning of the batch job. It returns the query to fetch the data.
     public Database.QueryLocator start(Database.BatchableContext bc) {
         return Database.getQueryLocator([
-            SELECT AccountId, StageName, Amount FROM Opportunity
+            SELECT AccountId, StageName, Amount FROM Opportunity WHERE CloseDate = THIS_MONTH
         ]);
     }
     
