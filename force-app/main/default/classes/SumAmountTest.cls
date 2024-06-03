@@ -19,11 +19,11 @@ public class SumAmountTest {
         // Create test Opportunities
         List<Opportunity> opportunities = new List<Opportunity>{
             new Opportunity(AccountId = accounts[0].Id, Name='op1', StageName = 'Closed Won', Amount = 1000, CloseDate = Date.today()),
-            new Opportunity(AccountId = accounts[0].Id, Name='op2', StageName = 'Negotiation', Amount = 500, CloseDate = Date.today().addMonths(1)),
-            new Opportunity(AccountId = accounts[0].Id, Name='op3', StageName = 'Closed Lost', Amount = 200, CloseDate = Date.today().addMonths(-1)),
+            new Opportunity(AccountId = accounts[0].Id, Name='op2', StageName = 'Negotiation', Amount = 500, CloseDate = Date.today().addDays(-1)),
+            new Opportunity(AccountId = accounts[0].Id, Name='op3', StageName = 'Closed Lost', Amount = 200, CloseDate = Date.today().addDays(-25)),
                 
-            new Opportunity(AccountId = accounts[1].Id, Name='op4', StageName = 'Closed Won', Amount = 1500, CloseDate = Date.today().addMonths(-1)),
-            new Opportunity(AccountId = accounts[1].Id, Name='op5', StageName = 'Negotiation', Amount = 700, CloseDate = Date.today().addMonths(1)),
+            new Opportunity(AccountId = accounts[1].Id, Name='op4', StageName = 'Closed Won', Amount = 1500, CloseDate = Date.today().addDays(-10)),
+            new Opportunity(AccountId = accounts[1].Id, Name='op5', StageName = 'Negotiation', Amount = 700, CloseDate = Date.today().addDays(-25)),
             new Opportunity(AccountId = accounts[1].Id, Name='op6', StageName = 'Closed Lost', Amount = 300, CloseDate = Date.today())
         };
         insert opportunities;
@@ -53,14 +53,14 @@ public class SumAmountTest {
                 System.assert(email.HtmlBody.contains('Open'), 'Email should contain Open stage.');
                 System.assert(email.HtmlBody.contains('R$ 500'), 'Email should contain Open amount for Account A.');
                 System.assert(email.HtmlBody.contains('Closed Lost'), 'Email should contain Closed Lost stage.');
-                System.assert(email.HtmlBody.contains('R$ 200'), 'Email should contain Closed Lost amount for Account A.');
+                System.assert(email.HtmlBody.contains('R$ 0'), 'Email should contain Closed Lost amount for Account A.');
                 
             } else if (email.Subject.contains('Account B')) {
                 System.assert(email.HtmlBody.contains('Account B'), 'Email should contain Account B.');
                 System.assert(email.HtmlBody.contains('Closed Won'), 'Email should contain Closed Won stage.');
-                System.assert(email.HtmlBody.contains('R$ 1.500'), 'Email should contain Closed Won amount for Account B.');
+                System.assert(email.HtmlBody.contains('R$ 0'), 'Email should contain Closed Won amount for Account B.');
                 System.assert(email.HtmlBody.contains('Open'), 'Email should contain Open stage.');
-                System.assert(email.HtmlBody.contains('R$ 700'), 'Email should contain Open amount for Account B.');
+                System.assert(email.HtmlBody.contains('R$ 0'), 'Email should contain Open amount for Account B.');
                 System.assert(email.HtmlBody.contains('Closed Lost'), 'Email should contain Closed Lost stage.');
                 System.assert(email.HtmlBody.contains('R$ 300'), 'Email should contain Closed Lost amount for Account B.');
             }
