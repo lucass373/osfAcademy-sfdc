@@ -14,7 +14,14 @@ Ver   Date         Author         Modification
 */
 @isTest
 public class ContactTriggerHandlerTest {
-    
+     /*
+    *********************************************************
+    @Method Name    : testUpdatePrimaryContact
+    @description    : Test method to verify if can set two contacts as primary.
+    @param          : None
+    @return         : void
+    *********************************************************
+    */
     @isTest
     static void testUpdatePrimaryContact() {        
         Account testAccount = new Account(Name = 'Test Account');
@@ -54,6 +61,14 @@ public class ContactTriggerHandlerTest {
         System.assertEquals(false, nonPrimaryContact.Is_Primary_Contact__c, 'The new contact should not be the primary contact.');
     }
     
+     /*
+    *********************************************************
+    @Method Name    : testUpdateAsyncContact
+    @description    : Test method to verify that non-primary contacts have the updated primary contact phone
+    @param          : None
+    @return         : void
+    *********************************************************
+    */
     @isTest
     static void testUpdateAsyncContact() {   
 
