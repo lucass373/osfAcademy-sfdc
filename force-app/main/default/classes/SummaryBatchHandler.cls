@@ -1,7 +1,29 @@
+/*
+*********************************************************
+Apex Class Name    : SummaryBatchHandler
+Created Date       : June 3, 2024
+@description       : This class processes opportunities to generate a summary 
+                     of their amounts categorized by stage for each account. 
+                     It also handles sending summary emails to primary contacts.
+@author            : Lucas Silva de Oliveira
+Modification Log:
+Ver   Date         Author          Modification
+1.0   06-03-2024   Lucas Silva     Initial Version
+*********************************************************
+*/
 public class SummaryBatchHandler {
-
+  // This map stores the summary of opportunities for each account, categorized by stage.
   public Map<Id, Map<String, Decimal>> accountSummaryMap = new Map<Id, Map<String, Decimal>>();
 
+    /*
+    *********************************************************
+    @Method Name    : processOpportunity
+    @description    : Processes a list of opportunities to update the summary map 
+                      with the total amounts for each stage (Closed Won, Open, Closed Lost).
+    @param          : List<Opportunity> subList - List of opportunities to process
+    @return         : Map<Id, Map<String, Decimal>> - Updated account summary map
+    *********************************************************
+    */
     public Map<Id, Map<String, Decimal>> processOpportunity(List<Opportunity> subList){        
         for (Opportunity opp : subList) {
             if (opp.AccountId != null) {
@@ -26,7 +48,16 @@ public class SummaryBatchHandler {
         return accountSummaryMap;
     }
 
-
+    /*
+    *********************************************************
+    @Method Name    : sendSumary
+    @description    : Sends summary emails to the primary contacts of accounts 
+                      with updated opportunity summaries. The email contains 
+                      a summary table of opportunity amounts categorized by stage.
+    @param          : Map<Id, Map<String, Decimal>> accSum - Summary map of account opportunity amounts
+    @return         : void
+    *********************************************************
+    */
     public void sendSumary(Map<Id, Map<String, Decimal>> accSum){
         
         List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();

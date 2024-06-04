@@ -1,22 +1,46 @@
+/*
+*********************************************************
+Apex Test Class Name : SumAmountTest
+Created Date         : May 20, 2024
+@description         : This test class verifies the functionality of the 
+                       SumAmount batch class by setting up test data and 
+                       validating the batch processing and email sending.
+                       It includes a setup method to create test records 
+                       and a test method to execute and validate the batch job.
+@author              : Lucas Silva de Oliveira
+Modification Log:
+Ver   Date         Author         Modification
+1.0   05-20-2024   Lucas Silva   Initial Version
+1.1   05-21-2024   Lucas Silva   Updated the test to verify the email content.
+*********************************************************
+*/
 @isTest
 public class SumAmountTest {
+
+    /*
+    *********************************************************
+    @Method Name    : setup
+    @description    : Test setup method to create test data for Accounts, 
+                      Contacts, and Opportunities.
+    @param          : None
+    @return         : void
+    *********************************************************
+    */
     @testSetup
     static void setup() {
-        // Create test Accounts
+        
         List<Account> accounts = new List<Account>{
             new Account(Name = 'Account A'),
             new Account(Name = 'Account B')
         };
         insert accounts;
-        
-        // Create test Contacts with Is_Primary_Contact__c set to true
+                
         List<Contact> contacts = new List<Contact>{
             new Contact(FirstName = 'Primary', LastName = 'ContactA', Email = 'primaryA@example.com', AccountId = accounts[0].Id, Is_Primary_Contact__c = true),
             new Contact(FirstName = 'Primary', LastName = 'ContactB', Email = 'primaryB@example.com', AccountId = accounts[1].Id, Is_Primary_Contact__c = true)
         };
         insert contacts;
-        
-        // Create test Opportunities
+                
         List<Opportunity> opportunities = new List<Opportunity>{
             new Opportunity(AccountId = accounts[0].Id, Name='op1', StageName = 'Closed Won', Amount = 1000, CloseDate = Date.today()),
             new Opportunity(AccountId = accounts[0].Id, Name='op2', StageName = 'Negotiation', Amount = 500, CloseDate = Date.today().addDays(-1)),
@@ -29,22 +53,29 @@ public class SumAmountTest {
         insert opportunities;
     }
 
+    /*
+    *********************************************************
+    @Method Name    : testBatchExecution
+    @description    : Test method to verify the execution of the SumAmount 
+                      batch class and validate the processing and email sending.
+    @param          : None
+    @return         : void
+    *********************************************************
+    */
     @isTest
     static void testBatchExecution() {
-        // Start the test
+        
         System.Test.startTest();
-        // Execute the batch class
+        
         SumAmount batch = new SumAmount();
         Database.executeBatch(batch);
         System.Test.stopTest();
         
-        // Verify that the batch processed the records correctly
-        // Use System.debug or Assertions to validate the results
+        
         List<EmailMessage> sentEmails = [SELECT Id, Subject, HtmlBody FROM EmailMessage];
 
         System.assertEquals(2, sentEmails.size(), 'Two emails should have been sent.');
         
-        // Check the content of the emails
           for (EmailMessage email : sentEmails) {
             if (email.Subject.contains('Account A')) {
                 System.assert(email.HtmlBody.contains('Account A'), 'Email should contain Account A.');
