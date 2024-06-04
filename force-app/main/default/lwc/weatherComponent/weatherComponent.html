@@ -1,0 +1,30 @@
+<template>
+    <lightning-card title={titleStr} icon-name="custom:custom3">
+            
+        <template if:true={showInfo}>
+            <div class="container">
+                <div class="header">
+                    <p>Description: {weatherData.description}</p>
+                    <p>Temperature: {weatherData.temperature} °C</p>
+                    
+                </div>
+                <div>
+                    <img src={icon} alt="Weather Icon" />
+                </div>
+            </div>
+        </template>
+        <template if:false={showInfo}>
+            <div class="container">
+                <div class="header">
+                    <p>No weather for that city</p>
+                </div>
+            </div>
+        </template>   
+        
+        <template if:true={error}>
+            <div>
+                <p>Error: {error}</p>
+            </div>
+        </template>
+    </lightning-card>
+</template>

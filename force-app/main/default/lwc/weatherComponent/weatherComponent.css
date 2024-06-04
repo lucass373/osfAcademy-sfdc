@@ -1,0 +1,9 @@
+.header{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.411);
+}
+.container{
+    margin-left: 200px;
+    margin-right: 200px;
+}
