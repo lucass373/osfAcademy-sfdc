@@ -3,8 +3,10 @@ public class WeatherService {
     // This method retrieves weather data for a given city
     @AuraEnabled(cacheable=true)
     public static WeatherWrapper getWeather(String city) {
-        // API key for accessing weather data
-        String apiKey = 'dff7f9b1a1d3e65f63fe9e6331e80cfc';
+    
+        // Retrieve API key from custom metadata
+        Weather_API_Config__mdt apiConfig = [SELECT API_Key__c FROM Weather_API_Config__mdt LIMIT 1];
+        String apiKey = apiConfig.API_Key__c;
 
         String billingCity;
 
